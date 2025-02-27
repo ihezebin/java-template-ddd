@@ -15,11 +15,15 @@ public class ExampleService {
 
     private final ExampleRepository exampleMapper;
 
+    private final ExampleRepository exampleMongo;
+
     public ExampleService(
             @Qualifier("exampleEs") ExampleRepository exampleEs,
-            @Qualifier("exampleMapper") ExampleRepository exampleMapper) {
+            @Qualifier("exampleMapper") ExampleRepository exampleMapper,
+            @Qualifier("exampleMongo") ExampleRepository exampleMongo) {
         this.exampleEs = exampleEs;
         this.exampleMapper = exampleMapper;
+        this.exampleMongo = exampleMongo;
     }
 
     public Example insert(Example example) {
@@ -29,6 +33,8 @@ public class ExampleService {
         String salt = UUID.randomUUID().toString().substring(0, 8);
         example.setSalt(salt);
         exampleMapper.insertOne(example);
+        exampleEs.insertOne(example);
+        exampleMongo.insertOne(example);
         return example;
     }
 
@@ -38,5 +44,9 @@ public class ExampleService {
 
     public Example findEs(String username) {
         return exampleEs.findByUsername(username);
+    }
+
+    public Example findMongo(String username) {
+        return exampleMongo.findByUsername(username);
     }
 }

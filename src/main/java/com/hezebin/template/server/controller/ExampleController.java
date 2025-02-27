@@ -45,13 +45,17 @@ public class ExampleController {
     }
 
     @GetMapping("/find_es")
-    public Example findEs() {
-        Example example = new Example();
-        example.setId("1");
-        example.setUsername("hezebin");
-        example.setPassword("123456");
-        example.setEmail("hezebin@gmail.com");
-        return example;
+    public ResponseBody<Example> findEs(@Valid @ModelAttribute FindExampleRequest request) {
+        String username = request.getUsername();
+        Example example = exampleService.findEs(username);
+        return ResponseBody.success(example);
+    }
+
+    @GetMapping("/find_mongo")
+    public ResponseBody<Example> findMongo(@Valid @ModelAttribute FindExampleRequest request) {
+        String username = request.getUsername();
+        Example example = exampleService.findMongo(username);
+        return ResponseBody.success(example);
     }
 
     @GetMapping("/config")

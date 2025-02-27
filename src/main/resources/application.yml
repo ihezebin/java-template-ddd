@@ -3,7 +3,7 @@ spring:
     name: java-template-ddd
   data:
     mongodb:
-      uri: mongodb://root:root@localhost:27017/java-template-ddd?authSource=admin
+      uri: mongodb://hezebin:HZB183318a.@localhost:27017/java-template-ddd?authSource=admin
     redis:
       host: localhost
       port: 6379
@@ -28,6 +28,11 @@ spring:
     url: ${spring.datasource.url}
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
+  elasticsearch:
+    uris: http://localhost:9200
+    # 如果有认证则添加以下配置
+    # username: elastic
+    # password: changeme
 
 mybatis:
   configuration:
