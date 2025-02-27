@@ -53,7 +53,7 @@ logging:
   # 日志格式配置
   pattern:
     # 文件输出为JSON格式
-    file: '{"timestamp":"%d{yyyy-MM-dd HH:mm:ss.SSS}","level":"%p","pid":"${PID}","thread":"%t","class":"%logger{39}","message":"%m","stack_trace":"%wEx"}%n'
+    file: '{"timestamp":"%d{yyyy-MM-dd HH:mm:ss.SSS}","level":"%p","pid":"${PID}","thread":"%t","class":"%logger{39}","trace_id":"%X{traceId}","message":"%m","stack_trace":"%wEx"}%n'
   # 日志轮转配置
   logback:
     rollingpolicy:
