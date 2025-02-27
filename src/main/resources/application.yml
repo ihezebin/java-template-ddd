@@ -9,13 +9,12 @@ spring:
       port: 6379
       password: root
       database: 0
-      jedis:
-        pool:
-          max-active: 50
-          max-idle: 10
-          min-idle: 5
-          max-wait: 10000ms
       timeout: 10000ms
+      pool:
+        max-active: 50
+        max-idle: 10
+        min-idle: 5
+        max-wait: 10000ms
   datasource:
     url: jdbc:mysql://localhost:3306/java-template-ddd?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root

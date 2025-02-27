@@ -17,13 +17,17 @@ public class ExampleService {
 
     private final ExampleRepository exampleMongo;
 
+    private final ExampleRepository exampleRedis;
+
     public ExampleService(
             @Qualifier("exampleEs") ExampleRepository exampleEs,
             @Qualifier("exampleMapper") ExampleRepository exampleMapper,
-            @Qualifier("exampleMongo") ExampleRepository exampleMongo) {
+            @Qualifier("exampleMongo") ExampleRepository exampleMongo,
+            @Qualifier("exampleRedis") ExampleRepository exampleRedis) {
         this.exampleEs = exampleEs;
         this.exampleMapper = exampleMapper;
         this.exampleMongo = exampleMongo;
+        this.exampleRedis = exampleRedis;
     }
 
     public Example insert(Example example) {
@@ -35,6 +39,7 @@ public class ExampleService {
         exampleMapper.insertOne(example);
         exampleEs.insertOne(example);
         exampleMongo.insertOne(example);
+        exampleRedis.insertOne(example);
         return example;
     }
 
@@ -48,5 +53,9 @@ public class ExampleService {
 
     public Example findMongo(String username) {
         return exampleMongo.findByUsername(username);
+    }
+
+    public Example findRedis(String username) {
+        return exampleRedis.findByUsername(username);
     }
 }

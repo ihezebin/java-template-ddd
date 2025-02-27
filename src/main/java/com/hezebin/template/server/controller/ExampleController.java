@@ -58,6 +58,13 @@ public class ExampleController {
         return ResponseBody.success(example);
     }
 
+    @GetMapping("/find_redis")
+    public ResponseBody<Example> findRedis(@Valid @ModelAttribute FindExampleRequest request) {
+        String username = request.getUsername();
+        Example example = exampleService.findRedis(username);
+        return ResponseBody.success(example);
+    }
+
     @GetMapping("/config")
     public CustomizeConfig config() {
         return customizeConfig;
