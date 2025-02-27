@@ -2,6 +2,18 @@
 
 该模板是基于 [go-template-ddd](https://github.com/ihezebin/go-template-ddd) 项目的 JAVA 实现。
 
+## 已集成组件
+
+- dto 绑定
+- 统一响应体
+- 全局异常处理
+- traceId 传递
+- 日志文件滚动
+- 请求参数和响应体日志
+- 跨域
+- 自定义配置文件
+- MySQL migration 和 mapper
+
 # go-template-ddd
 
 参考：
