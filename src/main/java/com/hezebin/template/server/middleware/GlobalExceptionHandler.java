@@ -10,10 +10,10 @@ import com.hezebin.template.application.dto.ResponseBody;
 import com.hezebin.template.application.dto.ResponseBodyCode;
 import com.hezebin.template.exception.ErrorException;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 @RestControllerAdvice
-@Log4j2
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
