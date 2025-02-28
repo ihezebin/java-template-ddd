@@ -5,15 +5,15 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 
 import com.hezebin.template.application.dto.ResponseBodyCode;
 import com.hezebin.template.domain.entity.Example;
 import com.hezebin.template.exception.ErrorException;
 
 @Slf4j
-@Repository("exampleEs")
-@ConditionalOnProperty(prefix = "elasticsearch", name = "uris", matchIfMissing = false)
+@Repository
+@ConditionalOnBean(ElasticsearchClient.class)
 public class ExampleEs implements ExampleRepository {
 
     private final ElasticsearchClient esClient;

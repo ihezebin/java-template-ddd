@@ -3,31 +3,30 @@ package com.hezebin.template.application.service;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.hezebin.template.domain.entity.Example;
-import com.hezebin.template.domain.repository.ExampleRepository;
+import com.hezebin.template.domain.repository.ExampleEs;
+import com.hezebin.template.domain.repository.ExampleMapper;
+import com.hezebin.template.domain.repository.ExampleMongo;
+import com.hezebin.template.domain.repository.ExampleRedis;
 import com.hezebin.template.exception.ErrorException;
 
 @Service
 public class ExampleService {
 
     @Autowired(required = false)
-    @Qualifier("exampleEs")
-    private ExampleRepository exampleEs;
+    // @Qualifier("exampleEs")
+    private ExampleEs exampleEs;
 
     @Autowired(required = false)
-    @Qualifier("exampleMapper")
-    private ExampleRepository exampleMapper;
+    private ExampleMapper exampleMapper;
 
     @Autowired(required = false)
-    @Qualifier("exampleMongo")
-    private ExampleRepository exampleMongo;
+    private ExampleMongo exampleMongo;
 
     @Autowired(required = false)
-    @Qualifier("exampleRedis")
-    private ExampleRepository exampleRedis;
+    private ExampleRedis exampleRedis;
 
     public Example insert(Example example) throws ErrorException {
         // 生成 id

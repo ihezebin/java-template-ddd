@@ -7,13 +7,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hezebin.template.application.dto.ResponseBodyCode;
 import com.hezebin.template.domain.entity.Example;
 import com.hezebin.template.exception.ErrorException;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Repository("exampleRedis")
-@ConditionalOnProperty(prefix = "redis", name = "host", matchIfMissing = false)
+@Repository
+@ConditionalOnBean(JedisPool.class)
 public class ExampleRedis implements ExampleRepository {
 
     private final JedisPool jedisPool;

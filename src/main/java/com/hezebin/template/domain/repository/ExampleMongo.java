@@ -11,11 +11,11 @@ import com.hezebin.template.exception.ErrorException;
 
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 
 @Slf4j
-@Repository("exampleMongo")
-@ConditionalOnProperty(prefix = "mongodb", name = "uri", matchIfMissing = false)
+@Repository
+@ConditionalOnBean(MongoClient.class)
 public class ExampleMongo implements ExampleRepository {
 
     private final MongoClient mongoClient;
