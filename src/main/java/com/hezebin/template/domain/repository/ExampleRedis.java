@@ -4,11 +4,16 @@ import org.springframework.stereotype.Repository;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hezebin.template.application.dto.ResponseBodyCode;
 import com.hezebin.template.domain.entity.Example;
+import com.hezebin.template.exception.ErrorException;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Repository("exampleRedis")
+@ConditionalOnProperty(prefix = "redis", name = "host", matchIfMissing = false)
 public class ExampleRedis implements ExampleRepository {
 
     private final JedisPool jedisPool;
@@ -24,7 +29,7 @@ public class ExampleRedis implements ExampleRepository {
     }
 
     @Override
-    public void insertOne(Example example) {
+    public void insertOne(Example example) throws ErrorException {
         try (Jedis jedis = jedisPool.getResource()) {
             String json = objectMapper.writeValueAsString(example);
 
@@ -39,13 +44,12 @@ public class ExampleRedis implements ExampleRepository {
                 pipeline.sync();
             }
         } catch (Exception e) {
-            log.error("Redis插入数据失败: ", e);
-            throw new RuntimeException("Redis插入数据失败: " + e.getMessage(), e);
+            throw new ErrorException(ResponseBodyCode.INTERNAL_SERVER_ERROR, e);
         }
     }
 
     @Override
-    public Example findByUsername(String username) {
+    public Example findByUsername(String username) throws ErrorException {
         try (Jedis jedis = jedisPool.getResource()) {
             // 先通过用户名索引获取ID
             String id = jedis.get(USERNAME_KEY_PREFIX + username);
@@ -61,13 +65,12 @@ public class ExampleRedis implements ExampleRepository {
 
             return objectMapper.readValue(json, Example.class);
         } catch (Exception e) {
-            log.error("Redis查询失败: ", e);
-            throw new RuntimeException("Redis查询失败: " + e.getMessage(), e);
+            throw new ErrorException(ResponseBodyCode.INTERNAL_SERVER_ERROR, e);
         }
     }
 
     @Override
-    public Example findByEmail(String email) {
+    public Example findByEmail(String email) throws ErrorException {
         try (Jedis jedis = jedisPool.getResource()) {
             String id = jedis.get(EMAIL_KEY_PREFIX + email);
             if (id == null) {
@@ -81,8 +84,7 @@ public class ExampleRedis implements ExampleRepository {
 
             return objectMapper.readValue(json, Example.class);
         } catch (Exception e) {
-            log.error("Redis查询失败: ", e);
-            throw new RuntimeException("Redis查询失败: " + e.getMessage(), e);
+            throw new ErrorException(ResponseBodyCode.INTERNAL_SERVER_ERROR, e);
         }
     }
 }

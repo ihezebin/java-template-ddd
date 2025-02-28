@@ -1,20 +1,9 @@
+server:
+  port: 8080
+
 spring:
   application:
     name: java-template-ddd
-  data:
-    mongodb:
-      uri: mongodb://hezebin:HZB183318a.@localhost:27017/java-template-ddd?authSource=admin
-    redis:
-      host: localhost
-      port: 6379
-      password: root
-      database: 0
-      timeout: 10000ms
-      pool:
-        max-active: 50
-        max-idle: 10
-        min-idle: 5
-        max-wait: 10000ms
   datasource:
     url: jdbc:mysql://localhost:3306/java-template-ddd?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
@@ -27,22 +16,31 @@ spring:
     url: ${spring.datasource.url}
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
-  elasticsearch:
-    uris: http://localhost:9200
-    # 如果有认证则添加以下配置
-    # username: elastic
-    # password: changeme
+
+mongodb:
+  # uri: mongodb://hezebin:HZB183318a.@localhost:27017/java-template-ddd?authSource=admin
+
+redis:
+  host: localhost
+  port: 6379
+  password: root
+  database: 0
+  timeout: 10000ms
+  pool:
+    max-active: 50
+    max-idle: 10
+    min-idle: 5
+    max-wait: 10000ms
+
+elasticsearch:
+  uris: http://localhost:9200
+  # 如果有认证则添加以下配置
+  # username: elastic
+  # password: changeme
 
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
-
-server:
-  port: 8080
-
-customize:
-  a: 1
-  b: 2
 
 # 添加日志配置
 logging:
@@ -71,3 +69,13 @@ logging:
       file-name-pattern: ${logging.file.path}/archived/application.%d{yyyy-MM-dd}.%i.log
       # 是否在启动时清理历史日志
       clean-history-on-start: false
+
+worker:
+  enabled: false
+
+cron:
+  enabled: false
+
+customize:
+  a: 1
+  b: 2

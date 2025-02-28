@@ -5,52 +5,38 @@ import org.elasticsearch.client.RestClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
+import co.elastic.clients.transport.ElasticsearchTransport;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @Configuration
+@ConditionalOnProperty(prefix = "elasticsearch", name = "uris", matchIfMissing = false)
 public class ElasticsearchConfig {
 
-    @Value("${spring.elasticsearch.uris}")
-    private String uris;
+        @Value("${elasticsearch.uris}")
+        private String[] uris;
 
-    @Bean
-    public RestClient restClient() {
-        String[] uriParts = uris.replace("http://", "").split(":");
-        return RestClient.builder(
-                new HttpHost(uriParts[0], Integer.parseInt(uriParts[1]), "http"))
-                .build();
-    }
+        @Bean
+        public ElasticsearchClient elasticsearchClient() {
+                // Create the low-level client
+                RestClient restClient = RestClient.builder(
+                                Arrays.stream(uris)
+                                                .map(HttpHost::create)
+                                                .toArray(HttpHost[]::new))
+                                .build();
 
-    @Bean
-    public ElasticsearchClient elasticsearchClient(RestClient restClient) throws IOException {
-        RestClientTransport transport = new RestClientTransport(
-                restClient,
-                new JacksonJsonpMapper());
+                // Create the transport with a Jackson mapper
+                ElasticsearchTransport transport = new RestClientTransport(
+                                restClient,
+                                new JacksonJsonpMapper());
 
-        ElasticsearchClient client = new ElasticsearchClient(transport);
-
-        // 创建索引和映射
-        try {
-            client.indices().create(c -> c
-                    .index("example")
-                    .mappings(m -> m
-                            .properties("id", p -> p.keyword(k -> k))
-                            .properties("username", p -> p.text(t -> t.analyzer("standard")))
-                            .properties("password", p -> p.text(t -> t))
-                            .properties("email", p -> p.keyword(k -> k))
-                            .properties("salt", p -> p.keyword(k -> k))));
-        } catch (Exception e) {
-            // 索引已存在的错误可以忽略
-            if (!e.getMessage().contains("resource_already_exists_exception")) {
-                throw e;
-            }
+                // And create the API client
+                return new ElasticsearchClient(transport);
         }
-
-        return client;
-    }
 }

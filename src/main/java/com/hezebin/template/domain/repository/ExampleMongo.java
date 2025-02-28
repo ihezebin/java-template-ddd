@@ -5,12 +5,17 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
+import com.hezebin.template.application.dto.ResponseBodyCode;
 import com.hezebin.template.domain.entity.Example;
+import com.hezebin.template.exception.ErrorException;
+
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 @Slf4j
 @Repository("exampleMongo")
+@ConditionalOnProperty(prefix = "mongodb", name = "uri", matchIfMissing = false)
 public class ExampleMongo implements ExampleRepository {
 
     private final MongoClient mongoClient;
@@ -26,7 +31,7 @@ public class ExampleMongo implements ExampleRepository {
     }
 
     @Override
-    public void insertOne(Example example) {
+    public void insertOne(Example example) throws ErrorException {
         try {
             Document doc = new Document()
                     .append("_id", example.getId())
@@ -41,30 +46,27 @@ public class ExampleMongo implements ExampleRepository {
                     doc,
                     new ReplaceOptions().upsert(true));
         } catch (Exception e) {
-            log.error("MongoDB插入文档失败: ", e);
-            throw new RuntimeException("MongoDB插入文档失败: " + e.getMessage(), e);
+            throw new ErrorException(ResponseBodyCode.INTERNAL_SERVER_ERROR, e);
         }
     }
 
     @Override
-    public Example findByUsername(String username) {
+    public Example findByUsername(String username) throws ErrorException {
         try {
             Document doc = getCollection().find(Filters.eq("username", username)).first();
             return documentToExample(doc);
         } catch (Exception e) {
-            log.error("MongoDB查询失败: ", e);
-            throw new RuntimeException("MongoDB查询失败: " + e.getMessage(), e);
+            throw new ErrorException(ResponseBodyCode.INTERNAL_SERVER_ERROR, e);
         }
     }
 
     @Override
-    public Example findByEmail(String email) {
+    public Example findByEmail(String email) throws ErrorException {
         try {
             Document doc = getCollection().find(Filters.eq("email", email)).first();
             return documentToExample(doc);
         } catch (Exception e) {
-            log.error("MongoDB查询失败: ", e);
-            throw new RuntimeException("MongoDB查询失败: " + e.getMessage(), e);
+            throw new ErrorException(ResponseBodyCode.INTERNAL_SERVER_ERROR, e);
         }
     }
 

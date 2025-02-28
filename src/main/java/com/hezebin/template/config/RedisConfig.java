@@ -3,34 +3,36 @@ package com.hezebin.template.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 @Configuration
+@ConditionalOnProperty(prefix = "redis", name = "host", matchIfMissing = false)
 public class RedisConfig {
 
-    @Value("${spring.data.redis.host}")
+    @Value("${redis.host}")
     private String host;
 
-    @Value("${spring.data.redis.port}")
+    @Value("${redis.port}")
     private int port;
 
-    @Value("${spring.data.redis.password}")
+    @Value("${redis.password}")
     private String password;
 
-    @Value("${spring.data.redis.database}")
+    @Value("${redis.database}")
     private int database;
 
-    @Value("${spring.data.redis.pool.max-active}")
+    @Value("${redis.pool.max-active}")
     private int maxActive;
 
-    @Value("${spring.data.redis.pool.max-idle}")
+    @Value("${redis.pool.max-idle}")
     private int maxIdle;
 
-    @Value("${spring.data.redis.pool.min-idle}")
+    @Value("${redis.pool.min-idle}")
     private int minIdle;
 
-    @Value("${spring.data.redis.timeout}")
+    @Value("${redis.timeout}")
     private String timeout;
 
     @Bean

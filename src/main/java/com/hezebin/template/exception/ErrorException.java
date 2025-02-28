@@ -10,6 +10,11 @@ public class ErrorException extends RuntimeException {
         this.code = code;
     }
 
+    public ErrorException(ResponseBodyCode code, Exception e) {
+        super(e.getMessage());
+        this.code = code;
+    }
+
     public ResponseBodyCode getCode() {
         return code;
     }

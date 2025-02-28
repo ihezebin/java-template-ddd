@@ -5,11 +5,15 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
+import com.hezebin.template.application.dto.ResponseBodyCode;
 import com.hezebin.template.domain.entity.Example;
+import com.hezebin.template.exception.ErrorException;
 
 @Slf4j
 @Repository("exampleEs")
+@ConditionalOnProperty(prefix = "elasticsearch", name = "uris", matchIfMissing = false)
 public class ExampleEs implements ExampleRepository {
 
     private final ElasticsearchClient esClient;
@@ -19,7 +23,7 @@ public class ExampleEs implements ExampleRepository {
         this.esClient = esClient;
     }
 
-    public void insertOne(Example example) {
+    public void insertOne(Example example) throws ErrorException {
         try {
             // PUT /example/_doc/{id}
             esClient.index(i -> i
@@ -27,12 +31,11 @@ public class ExampleEs implements ExampleRepository {
                     .id(example.getId())
                     .document(example));
         } catch (Exception e) {
-            log.error("ES插入文档失败: ", e);
-            throw new RuntimeException("ES插入文档失败: " + e.getMessage(), e);
+            throw new ErrorException(ResponseBodyCode.INTERNAL_SERVER_ERROR, e);
         }
     }
 
-    public Example findByUsername(String username) {
+    public Example findByUsername(String username) throws ErrorException {
         try {
             // GET /example/_search
             // {
@@ -52,12 +55,11 @@ public class ExampleEs implements ExampleRepository {
 
             return extractFirstHit(response);
         } catch (Exception e) {
-            log.error("ES查询失败: ", e);
-            throw new RuntimeException("ES查询失败: " + e.getMessage(), e);
+            throw new ErrorException(ResponseBodyCode.INTERNAL_SERVER_ERROR, e);
         }
     }
 
-    public Example findByEmail(String email) {
+    public Example findByEmail(String email) throws ErrorException {
         try {
             // GET /example/_search
             // {
@@ -77,7 +79,7 @@ public class ExampleEs implements ExampleRepository {
 
             return extractFirstHit(response);
         } catch (Exception e) {
-            throw new RuntimeException("ES查询失败", e);
+            throw new ErrorException(ResponseBodyCode.INTERNAL_SERVER_ERROR, e);
         }
     }
 

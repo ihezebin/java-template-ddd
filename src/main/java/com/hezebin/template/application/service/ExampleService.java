@@ -2,60 +2,69 @@ package com.hezebin.template.application.service;
 
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.hezebin.template.domain.entity.Example;
 import com.hezebin.template.domain.repository.ExampleRepository;
+import com.hezebin.template.exception.ErrorException;
 
 @Service
 public class ExampleService {
 
-    private final ExampleRepository exampleEs;
+    @Autowired(required = false)
+    @Qualifier("exampleEs")
+    private ExampleRepository exampleEs;
 
-    private final ExampleRepository exampleMapper;
+    @Autowired(required = false)
+    @Qualifier("exampleMapper")
+    private ExampleRepository exampleMapper;
 
-    private final ExampleRepository exampleMongo;
+    @Autowired(required = false)
+    @Qualifier("exampleMongo")
+    private ExampleRepository exampleMongo;
 
-    private final ExampleRepository exampleRedis;
+    @Autowired(required = false)
+    @Qualifier("exampleRedis")
+    private ExampleRepository exampleRedis;
 
-    public ExampleService(
-            @Qualifier("exampleEs") ExampleRepository exampleEs,
-            @Qualifier("exampleMapper") ExampleRepository exampleMapper,
-            @Qualifier("exampleMongo") ExampleRepository exampleMongo,
-            @Qualifier("exampleRedis") ExampleRepository exampleRedis) {
-        this.exampleEs = exampleEs;
-        this.exampleMapper = exampleMapper;
-        this.exampleMongo = exampleMongo;
-        this.exampleRedis = exampleRedis;
-    }
-
-    public Example insert(Example example) {
+    public Example insert(Example example) throws ErrorException {
         // 生成 id
         example.setId(UUID.randomUUID().toString());
         // 生成随机 salt
         String salt = UUID.randomUUID().toString().substring(0, 8);
         example.setSalt(salt);
-        exampleMapper.insertOne(example);
-        exampleEs.insertOne(example);
-        exampleMongo.insertOne(example);
-        exampleRedis.insertOne(example);
+
+        // 根据是否启用来调用对应的实现
+        if (exampleMapper != null) {
+            exampleMapper.insertOne(example);
+        }
+        if (exampleEs != null) {
+            exampleEs.insertOne(example);
+        }
+        if (exampleMongo != null) {
+            exampleMongo.insertOne(example);
+        }
+        if (exampleRedis != null) {
+            exampleRedis.insertOne(example);
+        }
         return example;
     }
 
-    public Example findOne(String username) {
-        return exampleMapper.findByUsername(username);
+    public Example findOne(String username) throws ErrorException {
+        return exampleMapper != null ? exampleMapper.findByUsername(username) : null;
     }
 
-    public Example findEs(String username) {
-        return exampleEs.findByUsername(username);
+    public Example findEs(String username) throws ErrorException {
+        return exampleEs != null ? exampleEs.findByUsername(username) : null;
     }
 
-    public Example findMongo(String username) {
-        return exampleMongo.findByUsername(username);
+    public Example findMongo(String username) throws ErrorException {
+        return exampleMongo != null ? exampleMongo.findByUsername(username) : null;
     }
 
-    public Example findRedis(String username) {
-        return exampleRedis.findByUsername(username);
+    public Example findRedis(String username) throws ErrorException {
+        return exampleRedis != null ? exampleRedis.findByUsername(username) : null;
     }
 }

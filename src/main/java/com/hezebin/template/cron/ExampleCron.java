@@ -1,11 +1,13 @@
 package com.hezebin.template.cron;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
+@ConditionalOnProperty(prefix = "cron", name = "enabled", havingValue = "true")
 /*
  * * * * * * ?
  * │ │ │ │ │ │
@@ -21,7 +23,7 @@ public class ExampleCron {
     // 每5秒执行一次
     @Scheduled(fixedRate = 5000)
     public void task1() {
-        // log.info("定时任务1执行");
+        log.info("定时任务1执行");
     }
 
     // 每天凌晨1点执行
