@@ -1,7 +1,10 @@
 package com.hezebin.template.domain.repository;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 import com.hezebin.template.domain.entity.Example;
@@ -20,4 +23,10 @@ public interface ExampleMapper extends ExampleRepository {
 
     @Select("SELECT * FROM example WHERE email = #{email}")
     public Example findByEmail(String email);
+
+    @Select("SELECT COUNT(*) FROM example")
+    long count();
+
+    @Select("SELECT * FROM example LIMIT #{offset}, #{pageSize}")
+    List<Example> findPage(@Param("offset") int offset, @Param("pageSize") int pageSize);
 }

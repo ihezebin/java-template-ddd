@@ -41,6 +41,8 @@ public class RedisConfig {
         poolConfig.setMaxTotal(maxActive);
         poolConfig.setMaxIdle(maxIdle);
         poolConfig.setMinIdle(minIdle);
+        // 禁用 JMX
+        poolConfig.setJmxEnabled(false);
 
         return new JedisPool(poolConfig, host, port,
                 Integer.parseInt(timeout.replace("ms", "")),

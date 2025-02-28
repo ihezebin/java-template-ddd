@@ -12,7 +12,6 @@ import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
 import co.elastic.clients.transport.ElasticsearchTransport;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 @Configuration

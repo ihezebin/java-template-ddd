@@ -1,4 +1,4 @@
-package com.hezebin.template.server.middleware;
+package com.hezebin.template.server.controller;
 
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;

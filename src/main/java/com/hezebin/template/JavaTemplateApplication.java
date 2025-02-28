@@ -9,9 +9,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import com.hezebin.template.config.CustomizeConfig;
 
 @SpringBootApplication
-@EnableConfigurationProperties(CustomizeConfig.class)
 @ServletComponentScan
 @EnableScheduling
+@EnableConfigurationProperties(CustomizeConfig.class)
 public class JavaTemplateApplication {
 
 	public static void main(String[] args) {

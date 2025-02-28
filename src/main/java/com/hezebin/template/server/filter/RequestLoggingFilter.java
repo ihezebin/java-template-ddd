@@ -1,4 +1,4 @@
-package com.hezebin.template.server.middleware;
+package com.hezebin.template.server.filter;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
