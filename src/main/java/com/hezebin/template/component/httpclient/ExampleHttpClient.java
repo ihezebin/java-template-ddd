@@ -2,8 +2,11 @@ package com.hezebin.template.component.httpclient;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
 
 import com.hezebin.template.application.dto.ResponseBody;
 import com.hezebin.template.domain.entity.Example;
@@ -20,21 +23,20 @@ public class ExampleHttpClient {
     private String baseUrl;
 
     @Autowired
-    private WebClient webClient;
+    private RestTemplate restTemplate;
 
     public Example getExampleById(String id) throws ErrorException {
         try {
-            return webClient.get()
-                    .uri(baseUrl + "/api/example/{id}", id)
-                    .retrieve()
-                    .bodyToMono(ResponseBody.class)
-                    .map(response -> {
-                        if (response.getCode() != ResponseBodyCode.OK.getCode()) {
-                            throw new ErrorException(ResponseBodyCode.BAD_REQUEST, response.getMessage());
-                        }
-                        return (Example) response.getData();
-                    })
-                    .block();
+            ResponseBody response = restTemplate.getForObject(
+                    baseUrl + "/api/example/{id}",
+                    ResponseBody.class,
+                    id);
+
+            if (response.getCode() != ResponseBodyCode.OK.getCode()) {
+                throw new ErrorException(ResponseBodyCode.BAD_REQUEST, response.getMessage());
+            }
+            return (Example) response.getData();
+
         } catch (Exception e) {
             log.error("Failed to get example by id: {}", id, e);
             throw new ErrorException(ResponseBodyCode.INTERNAL_SERVER_ERROR, e);
@@ -43,18 +45,16 @@ public class ExampleHttpClient {
 
     public Example createExample(Example example) throws ErrorException {
         try {
-            return webClient.post()
-                    .uri(baseUrl + "/api/example")
-                    .bodyValue(example)
-                    .retrieve()
-                    .bodyToMono(ResponseBody.class)
-                    .map(response -> {
-                        if (response.getCode() != ResponseBodyCode.OK.getCode()) {
-                            throw new ErrorException(ResponseBodyCode.BAD_REQUEST, response.getMessage());
-                        }
-                        return (Example) response.getData();
-                    })
-                    .block();
+            ResponseBody response = restTemplate.postForObject(
+                    baseUrl + "/api/example",
+                    example,
+                    ResponseBody.class);
+
+            if (response.getCode() != ResponseBodyCode.OK.getCode()) {
+                throw new ErrorException(ResponseBodyCode.BAD_REQUEST, response.getMessage());
+            }
+            return (Example) response.getData();
+
         } catch (Exception e) {
             log.error("Failed to create example: {}", example, e);
             throw new ErrorException(ResponseBodyCode.INTERNAL_SERVER_ERROR, e);
@@ -63,23 +63,16 @@ public class ExampleHttpClient {
 
     public String getBaiduHomePage() throws ErrorException {
         try {
-            return webClient.get()
-                    .uri("http://www.baidu.com")
-                    .exchangeToMono(response -> {
-                        if (response.statusCode().is3xxRedirection()) {
-                            String redirectUrl = response.headers().header("Location").get(0);
-                            return webClient.get()
-                                    .uri(redirectUrl)
-                                    .retrieve()
-                                    .bodyToMono(String.class);
-                        }
-                        return response.bodyToMono(String.class);
-                    })
-                    .map(response -> {
-                        log.info("Baidu homepage response: {}", response);
-                        return response;
-                    })
-                    .block();
+            ResponseEntity<String> response = restTemplate.getForEntity("http://www.baidu.com", String.class);
+
+            // 处理重定向
+            if (response.getStatusCode().is3xxRedirection()) {
+                String redirectUrl = response.getHeaders().getFirst(HttpHeaders.LOCATION);
+                return restTemplate.getForObject(redirectUrl, String.class);
+            }
+
+            return response.getBody();
+
         } catch (Exception e) {
             log.error("Failed to get Baidu homepage", e);
             throw new ErrorException(ResponseBodyCode.INTERNAL_SERVER_ERROR, e);

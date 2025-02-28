@@ -19,6 +19,9 @@ public class ExampleHttpClientTest {
                 // 执行测试
                 String result = exampleHttpClient.getBaiduHomePage();
 
+                // 打印结果
+                System.out.println(result);
+
                 // 验证结果
                 assertNotNull(result);
                 // 由于百度首页可能会有变化，我们放宽验证条件
