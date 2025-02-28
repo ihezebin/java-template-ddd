@@ -1,4 +1,4 @@
-package com.hezebin.template.jwt;
+package com.hezebin.template;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -17,7 +17,7 @@ public class JwtTest {
     // 使用强密钥，实际项目中应该配置在配置文件中
     private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    // mvn test -Dtest=JwtTest#testCreateAndParseToken
+    // mvn test -Dtest=com.hezebin.template.JwtTest#testCreateAndParseToken
     @Test
     public void testCreateAndParseToken() {
         // 准备测试数据

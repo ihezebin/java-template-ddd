@@ -79,3 +79,7 @@ cron:
 customize:
   a: 1
   b: 2
+
+example:
+  service:
+    base-url: http://example-service:8080
