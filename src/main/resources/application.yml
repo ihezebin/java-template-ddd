@@ -18,7 +18,7 @@ spring:
     password: ${spring.datasource.password}
 
 mongodb:
-  uri: mongodb://hezebin:HZB183318a.@localhost:27017/java-template-ddd?authSource=admin
+  uri: mongodb://root:root@localhost:27017/java-template-ddd?authSource=admin
 
 redis:
   host: localhost
